@@ -53,8 +53,8 @@ class IntappIntakeClient:
             return "No requests found."
 
         # Header
-        header = f"{'ID':<8} | {'Date':<10} | {'Status':<12} | {'Current State':<25} | {'Created By':<12} | {'Name'}"
-        separator = "-" * 120
+        header = f"{'ID':<8} | {'Date':<10} | {'Status':<12} | {'Current State':<25} | {'Type':<20} | {'Name'}"
+        separator = "-" * 130
         
         lines = [header, separator]
         
@@ -63,10 +63,10 @@ class IntappIntakeClient:
             date = str(r.get('createdOn', ''))[:10]
             status = str(r.get('status', ''))
             state = str(r.get('currentState', ''))[:25]
-            creator = str(r.get('createdBy', ''))[:12]
+            req_type = str(r.get('requestType', ''))[:20]
             name = str(r.get('name', ''))
             
-            lines.append(f"{req_id:<8} | {date:<10} | {status:<12} | {state:<25} | {creator:<12} | {name}")
+            lines.append(f"{req_id:<8} | {date:<10} | {status:<12} | {state:<25} | {req_type:<20} | {name}")
             
         return "\n".join(lines)
 

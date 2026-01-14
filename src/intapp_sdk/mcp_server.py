@@ -22,6 +22,17 @@ def get_client():
     return IntappIntakeClient(BASE_URL, TOKEN)
 
 @mcp.tool()
+def get_cfi_team_requests(limit: int = 15) -> str:
+    """
+    Get the most recent requests for the CFI Team (Mark Rob as QC/Reviewer or Michael Sloan as Analyst).
+    Returns a formatted ASCII table of the matching requests.
+    """
+    client = get_client()
+    logger.info(f"Fetching CFI Team requests (limit={limit})")
+    data = client.get_cfi_team_requests(limit=limit)
+    return client.format_request_table(data)
+
+@mcp.tool()
 def list_valuation_requests(limit: int = 50) -> List[dict]:
     """
     List the most recent intake requests from Intapp.

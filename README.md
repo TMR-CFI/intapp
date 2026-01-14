@@ -77,7 +77,17 @@ This repository is "Agent-Ready." The file `src/intapp_sdk/mcp_server.py` serves
 
 **Available Tools:**
 
+
+
+- `get_cfi_team_requests`: Get the most recent requests for Mark Rob (QC) or Michael Sloan (Analyst).
+
+
+
 - `list_valuation_requests`: View recent intake activity.
+
+
+
+
 
 - `get_request_details`: Get full details for a specific request.
 

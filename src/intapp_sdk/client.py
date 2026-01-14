@@ -44,6 +44,49 @@ class IntappIntakeClient:
         response.raise_for_status()
         return response.json()
 
+    def get_cfi_team_requests(self, limit=15, lookback_days=60):
+        """
+        Specialized search for the CFI Team (Mark Rob as QC/Reviewer or Michael Sloan as Analyst).
+        """
+        from datetime import datetime, timedelta
+        from concurrent.futures import ThreadPoolExecutor
+        
+        modified_from = (datetime.now() - timedelta(days=lookback_days)).strftime("%Y-%m-%dT%H:%M:%S")
+        all_reqs = self.list_requests(limit=1000, modified_from=modified_from)
+        
+        matches = []
+        
+        def process_req(req):
+            req_id = req['id']
+            try:
+                detail = self.get_request(req_id)
+                if not detail: return None
+                
+                qc_match = False
+                analyst_match = False
+                
+                for a in detail.get('answers', []):
+                    val = str(a.get('displayValue', '')).lower()
+                    field = a.get('questionName', '')
+                    
+                    if "mark rob" in val and ("Reviewer" in field or "QC" in field):
+                        qc_match = True
+                    if "michael sloan" in val and "Analyst" in field:
+                        analyst_match = True
+                
+                if qc_match or analyst_match:
+                    return detail
+            except:
+                pass
+            return None
+
+        with ThreadPoolExecutor(max_workers=20) as executor:
+            results = list(executor.map(process_req, all_reqs))
+            matches = [r for r in results if r]
+
+        matches.sort(key=lambda x: x.get('id', 0), reverse=True)
+        return matches[:limit]
+
     @staticmethod
     def format_request_table(requests_data):
         """
@@ -74,6 +117,31 @@ class IntappIntakeClient:
         return "\n".join(lines)
 
     @staticmethod
+    def format_request_table_markdown(requests_data):
+        """
+        Returns a markdown table representation of request items.
+        """
+        if not requests_data:
+            return "No requests found."
+
+        # Sort by ID descending to ensure newest are on top
+        sorted_data = sorted(requests_data, key=lambda x: x.get('id', 0), reverse=True)
+
+        # Markdown table header
+        lines = ["| ID | Date | Status | Current State | Type | Name |"]
+        lines.append("| --- | --- | --- | --- | --- | --- |")
+        
+        for r in sorted_data:
+            req_id = str(r.get('id', ''))
+            date = str(r.get('createdOn', ''))[:10]
+            status = str(r.get('status', ''))
+            state = str(r.get('currentState', ''))
+            req_type = str(r.get('requestType', ''))
+            name = str(r.get('name', '')).replace('|', '\\|')  # Escape pipe characters
+            
+            lines.append(f"| {req_id} | {date} | {status} | {state} | {req_type} | {name} |")
+            
+        return "\n".join(lines)
 
     def get_request(self, request_id):
         """

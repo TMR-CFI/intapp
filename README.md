@@ -45,11 +45,19 @@ print(f"Processing: {request['name']}")
 client.download_attachment(531311, 527948, "memo.pdf")
 ```
 
-### Running Examples
-You can run the provided example to see the SDK in action:
-```bash
-python examples/fetch_request.py
-```
+## Tools
+The repository includes several specialized tools in the `tools/` and `examples/` directories:
+
+### Core Tools (`tools/`)
+- **`list_recent_requests.py`**: A generic tool to list the N most recent requests.
+  - Usage: `python tools/list_recent_requests.py -n 25`
+  - Defaults to "Valuation Request" type and last 30 days of activity.
+- **`analyze_workload.py`**: Provides a summary of all `InProgress` valuation requests grouped by their current workflow state.
+  - Usage: `python tools/analyze_workload.py`
+
+### Examples (`examples/`)
+- **`fetch_request.py`**: Fetches a single request and downloads all its attachments.
+- **`get_qc_requests.py`**: A discovery tool that searches for requests assigned to specific individuals (e.g., "Mark Rob") in QC/Reviewer roles.
 
 ## AI Agent Integration
 

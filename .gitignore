@@ -19,6 +19,7 @@ data/
 *.json
 *.yaml
 !examples/*.yaml
+!docs/swagger.json
 
 # SDK specific
 .idea/

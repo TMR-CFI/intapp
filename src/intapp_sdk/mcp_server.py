@@ -25,12 +25,17 @@ def get_client():
 def list_valuation_requests(limit: int = 50) -> List[dict]:
     """
     List the most recent intake requests from Intapp.
-    Defaults to 'Valuation Request' type.
+    Defaults to 'Valuation Request' type from the last 30 days.
     """
+    from datetime import datetime, timedelta
     client = get_client()
     logger.info(f"Listing {limit} requests")
+    
+    # Use a 30-day window to ensure we get current data
+    thirty_days_ago = (datetime.now() - timedelta(days=30)).strftime("%Y-%m-%dT%H:%M:%S")
+    
     # Fetch a large batch to ensure we can sort and get the absolute newest ones
-    data = client.list_requests(limit=1000)
+    data = client.list_requests(limit=1000, modified_from=thirty_days_ago)
     data.sort(key=lambda x: x.get('createdOn', ''), reverse=True)
     return data[:limit]
 
@@ -40,10 +45,15 @@ def get_formatted_request_table(limit: int = 10) -> str:
     Returns a human-readable ASCII table of the most recent valuation requests.
     Useful for displaying a summary directly to the user.
     """
+    from datetime import datetime, timedelta
     client = get_client()
     logger.info(f"Fetching formatted table for {limit} requests")
+    
+    # Use a 30-day window to ensure we get current data
+    thirty_days_ago = (datetime.now() - timedelta(days=30)).strftime("%Y-%m-%dT%H:%M:%S")
+    
     # Fetch a large batch to ensure we can sort and get the absolute newest ones
-    data = client.list_requests(limit=1000)
+    data = client.list_requests(limit=1000, modified_from=thirty_days_ago)
     data.sort(key=lambda x: x.get('createdOn', ''), reverse=True)
     return client.format_request_table(data[:limit])
 

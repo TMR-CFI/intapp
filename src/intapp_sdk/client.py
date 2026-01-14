@@ -2,6 +2,7 @@ import requests
 import re
 import json
 import logging
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -186,6 +187,40 @@ class IntappIntakeClient:
             f.write(file_content)
         
         return output_path
+
+    def download_all_attachments(self, request_id, output_dir):
+        """
+        Downloads all attachments for a specific request to the given directory.
+        Returns a list of paths to the downloaded files.
+        """
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+
+        request = self.get_request(request_id)
+        if not request:
+            logger.warning(f"Request {request_id} not found.")
+            return []
+
+        attachments = request.get('attachments', [])
+        downloaded_files = []
+
+        for att in attachments:
+            att_id = att.get('id')
+            raw_name = att.get('fileName') or att.get('name')
+            if not att_id or not raw_name:
+                continue
+
+            safe_name = self.sanitize_filename(raw_name)
+            output_path = os.path.join(output_dir, safe_name)
+            
+            try:
+                self.download_attachment(request_id, att_id, output_path)
+                downloaded_files.append(output_path)
+                logger.info(f"Downloaded: {output_path}")
+            except Exception as e:
+                logger.error(f"Failed to download attachment {att_id} ({raw_name}): {e}")
+
+        return downloaded_files
 
     def search_requests_by_answer(self, query, limit=50):
         """

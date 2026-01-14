@@ -54,6 +54,12 @@ client.download_attachment(531311, 527948, "memo.pdf")
 The repository includes several specialized tools in the `tools/` and `examples/` directories:
 
 ### Core Tools (`tools/`)
+- **`fetch_request_data.py`**: A unified tool to retrieve detailed request information (People, Dates, Financials, Valuation, General, Attachments).
+  - Usage: `python tools/fetch_request_data.py <REQUEST_ID> [--all | --people | --dates | ...]`
+- **`download_request_files.py`**: Downloads all attachments for a specific request.
+  - Usage: `python tools/download_request_files.py <REQUEST_ID> [--output-dir <DIR>]`
+- **`search_team_cfi.py`**: Searches for active requests assigned to the CFI Team (Mark Rob/Michael Sloan).
+  - Usage: `python tools/search_team_cfi.py`
 - **`list_recent_requests.py`**: A generic tool to list the N most recent requests.
   - Usage: `python tools/list_recent_requests.py -n 25`
   - Defaults to "Valuation Request" type and last 30 days of activity.

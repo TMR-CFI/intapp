@@ -52,8 +52,65 @@ python examples/fetch_request.py
 ```
 
 ## AI Agent Integration
-This SDK is designed for AI-driven workflows:
-- **Discovery**: Agents can use `list_requests()` to identify new work.
-- **Context Extraction**: Agents can fetch detailed request data and analyze YAML/JSON structures.
-- **Document Processing**: Agents can programmatically download attachments for OCR, analysis, or data extraction.
-- **Specification**: The full API surface is documented in `docs/swagger.json` for agent reasoning about available endpoints.
+
+
+
+### MCP Server (Model Context Protocol)
+
+This SDK includes a built-in MCP server that allows AI agents (like Claude Desktop) to use Intapp tools directly.
+
+
+
+**Available Tools:**
+
+- `list_valuation_requests`: View recent intake activity.
+
+- `get_request_details`: Get full details for a specific request.
+
+- `search_by_team_member`: Find requests assigned to specific people (e.g., "Mark Rob").
+
+- `download_attachment_to_data_dir`: Programmatically download files for analysis.
+
+
+
+#### How to use with Claude Desktop:
+
+Add the following to your `claude_desktop_config.json`:
+
+
+
+```json
+
+{
+
+  "mcpServers": {
+
+    "intapp": {
+
+      "command": "python",
+
+      "args": [
+
+        "C:/Users/MRob0/dev/intapp/src/intapp_sdk/mcp_server.py"
+
+      ],
+
+      "env": {
+
+        "INTAPP_TOKEN": "your_token_here"
+
+      }
+
+    }
+
+  }
+
+}
+
+```
+
+
+
+## Discovery
+
+Agents can use `list_requests()` to identify new work.

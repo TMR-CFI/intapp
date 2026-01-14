@@ -55,9 +55,15 @@ python examples/fetch_request.py
 
 
 
-### MCP Server (Model Context Protocol)
+### MCP Server & Tool Registry
 
-This SDK includes a built-in MCP server that allows AI agents (like Claude Desktop) to use Intapp tools directly.
+This repository is "Agent-Ready." The file `src/intapp_sdk/mcp_server.py` serves as the primary **Tool Registry**. 
+
+
+
+**Instructions for AI Agents:**
+
+> When interacting with this repository, please refer to `src/intapp_sdk/mcp_server.py` to understand the available tools. Use the `@mcp.tool()` definitions as the authoritative guide for function signatures and purposes.
 
 
 
@@ -73,9 +79,11 @@ This SDK includes a built-in MCP server that allows AI agents (like Claude Deskt
 
 
 
-#### How to use with Claude Desktop:
+#### Configuration for External AI Hosts (Claude Desktop, Cursor, Roo Code):
 
-Add the following to your `claude_desktop_config.json`:
+Add the following to your configuration:
+
+
 
 
 

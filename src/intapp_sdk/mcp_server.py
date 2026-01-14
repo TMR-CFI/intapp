@@ -29,7 +29,10 @@ def list_valuation_requests(limit: int = 50) -> List[dict]:
     """
     client = get_client()
     logger.info(f"Listing {limit} requests")
-    return client.list_requests(limit=limit)
+    # Fetch a larger batch to ensure we can sort and get the newest ones
+    data = client.list_requests(limit=max(limit, 100))
+    data.sort(key=lambda x: x.get('createdOn', ''), reverse=True)
+    return data[:limit]
 
 @mcp.tool()
 def get_formatted_request_table(limit: int = 10) -> str:
@@ -39,8 +42,10 @@ def get_formatted_request_table(limit: int = 10) -> str:
     """
     client = get_client()
     logger.info(f"Fetching formatted table for {limit} requests")
-    data = client.list_requests(limit=limit)
-    return client.format_request_table(data)
+    # Fetch a larger batch to ensure we can sort and get the newest ones
+    data = client.list_requests(limit=max(limit, 100))
+    data.sort(key=lambda x: x.get('createdOn', ''), reverse=True)
+    return client.format_request_table(data[:limit])
 
 @mcp.tool()
 def get_request_details(request_id: int) -> dict:

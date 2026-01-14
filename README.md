@@ -79,7 +79,15 @@ This repository is "Agent-Ready." The file `src/intapp_sdk/mcp_server.py` serves
 
 
 
+- `open_request_in_browser`: Opens a specific Intapp request ID in the default web browser.
+
+
+
 - `get_cfi_team_requests`: Get the most recent requests for Mark Rob (QC) or Michael Sloan (Analyst).
+
+
+
+
 
 
 

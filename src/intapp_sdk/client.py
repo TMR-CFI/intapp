@@ -44,6 +44,12 @@ class IntappIntakeClient:
         response.raise_for_status()
         return response.json()
 
+    def get_request_url(self, request_id):
+        """
+        Constructs the direct web application URL for a specific intake request.
+        """
+        return f"https://marcum-flow.open.intapp.com/app/app/index.html#/requests/{request_id}"
+
     def get_cfi_team_requests(self, limit=15, lookback_days=60):
         """
         Specialized search for the CFI Team (Mark Rob as QC/Reviewer or Michael Sloan as Analyst).
@@ -75,8 +81,8 @@ class IntappIntakeClient:
                         analyst_match = True
                 
                 if qc_match or analyst_match:
-                    # Skip canceled or completed requests
-                    if detail.get('currentState') == "Canceled" or detail.get('status') == "Complete":
+                    # Skip canceled, completed or finalized requests
+                    if detail.get('currentState') in ["Canceled", "Finalized"] or detail.get('status') == "Complete":
                         return None
                     return detail
             except:

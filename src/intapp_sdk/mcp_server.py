@@ -22,6 +22,21 @@ def get_client():
     return IntappIntakeClient(BASE_URL, TOKEN)
 
 @mcp.tool()
+def open_request_in_browser(request_id: int) -> str:
+    """
+    Generates the web URL for a request and attempts to open it in the default system browser.
+    Returns the URL that was opened.
+    """
+    import subprocess
+    client = get_client()
+    url = client.get_request_url(request_id)
+    logger.info(f"Opening request {request_id} in browser: {url}")
+    
+    # Use 'start' on Windows to open the URL
+    subprocess.run(["cmd", "/c", "start", url], check=True)
+    return f"Opened: {url}"
+
+@mcp.tool()
 def get_cfi_team_requests(limit: int = 15) -> str:
     """
     Get the most recent requests for the CFI Team (Mark Rob as QC/Reviewer or Michael Sloan as Analyst).

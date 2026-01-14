@@ -13,7 +13,7 @@ def team_search():
     client = IntappIntakeClient(BASE_URL, TOKEN)
 
     print("Searching for CFI Team requests (Mark Rob as QC or Michael Sloan as Analyst)...")
-    print("Excluding Canceled and Complete requests.")
+    print("Excluding Canceled, Complete and Finalized requests.")
     
     try:
         # Use the SDK method which now includes the cancellation and completion filter

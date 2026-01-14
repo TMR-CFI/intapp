@@ -52,13 +52,16 @@ class IntappIntakeClient:
         if not requests_data:
             return "No requests found."
 
+        # Sort by ID descending to ensure newest are on top
+        sorted_data = sorted(requests_data, key=lambda x: x.get('id', 0), reverse=True)
+
         # Header
         header = f"{'ID':<8} | {'Date':<10} | {'Status':<12} | {'Current State':<25} | {'Type':<20} | {'Name'}"
         separator = "-" * 130
         
         lines = [header, separator]
         
-        for r in requests_data:
+        for r in sorted_data:
             req_id = str(r.get('id', ''))
             date = str(r.get('createdOn', ''))[:10]
             status = str(r.get('status', ''))

@@ -20,7 +20,3 @@ data/
 *.yaml
 !examples/*.yaml
 !docs/swagger.json
-
-# SDK specific
-.idea/
-.vscode/

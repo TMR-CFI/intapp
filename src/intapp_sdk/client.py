@@ -75,6 +75,9 @@ class IntappIntakeClient:
                         analyst_match = True
                 
                 if qc_match or analyst_match:
+                    # Skip canceled requests
+                    if detail.get('currentState') == "Canceled":
+                        return None
                     return detail
             except:
                 pass

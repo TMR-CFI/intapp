@@ -40,6 +40,30 @@ class IntappIntakeClient:
         response.raise_for_status()
         return response.json()
 
+    def download_attachment(self, request_id, attachment_id, output_path):
+        """
+        Downloads an attachment and saves it to the specified path.
+        """
+        import base64
+        url = f"{self.base_url}/api/intake/v1/requests/{request_id}/attachments/{attachment_id}"
+        params = {'includeContent': 'true'}
+        
+        response = requests.get(url, headers=self.headers, params=params)
+        response.raise_for_status()
+        
+        data = response.json()
+        content_b64 = data.get('content')
+        
+        if not content_b64:
+            raise ValueError(f"No content found for attachment {attachment_id}")
+            
+        file_content = base64.b64decode(content_b64)
+        
+        with open(output_path, 'wb') as f:
+            f.write(file_content)
+        
+        return output_path
+
     @staticmethod
     def sanitize_filename(name):
         """

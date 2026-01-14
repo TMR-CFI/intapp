@@ -21,15 +21,38 @@ def main():
     try:
         data = client.get_request(request_id)
         if data:
-            filename = f"{client.sanitize_filename(data['name'])}.yaml"
-            # Save to the data directory
+            base_filename = client.sanitize_filename(data['name'])
+            filename = f"{base_filename}.yaml"
+            
+            # Setup directories
             os.makedirs('../data', exist_ok=True)
+            attachment_dir = os.path.join('../data', f"{base_filename}_attachments")
+            os.makedirs(attachment_dir, exist_ok=True)
+            
             filepath = os.path.join('../data', filename)
             
+            # Save YAML metadata
             with open(filepath, 'w', encoding='utf-8') as f:
                 yaml.dump(data, f, sort_keys=False, default_flow_style=False)
             
-            print(f"Successfully saved to {filepath}")
+            print(f"Successfully saved metadata to {filepath}")
+
+            # Download Attachments
+            attachments = data.get('attachments', [])
+            if attachments:
+                print(f"Downloading {len(attachments)} attachments...")
+                for att in attachments:
+                    att_id = att['id']
+                    att_name = client.sanitize_filename(att['name'])
+                    att_path = os.path.join(attachment_dir, att_name)
+                    
+                    try:
+                        client.download_attachment(request_id, att_id, att_path)
+                        print(f"  - Downloaded: {att['name']}")
+                    except Exception as e:
+                        print(f"  - Failed to download {att['name']}: {e}")
+            else:
+                print("No attachments found.")
         else:
             print("Request not found.")
     except Exception as e:

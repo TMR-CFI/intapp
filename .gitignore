@@ -20,3 +20,6 @@ data/
 *.yaml
 !examples/*.yaml
 !docs/swagger.json
+
+# Local chat/debug logs (can contain tokens)
+docs/chat.txt

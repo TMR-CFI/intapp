@@ -5,11 +5,12 @@ from dotenv import load_dotenv
 # Add src to path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
 from intapp_sdk import IntappIntakeClient
+from intapp_sdk.auth import get_intapp_token
 
 def team_search():
     load_dotenv()
     BASE_URL = "https://marcum-flow.open.intapp.com/api"
-    TOKEN = os.getenv("INTAPP_TOKEN", "INTAPP_TOKEN_REDACTED")
+    TOKEN = get_intapp_token()
     client = IntappIntakeClient(BASE_URL, TOKEN)
 
     print("Searching for CFI Team requests (Mark Rob as QC or Michael Sloan as Analyst)...")

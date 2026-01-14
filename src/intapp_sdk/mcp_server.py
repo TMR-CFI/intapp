@@ -7,6 +7,7 @@ from fastmcp import FastMCP
 # Add src to path so we can import the local SDK
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from intapp_sdk import IntappIntakeClient
+from intapp_sdk.auth import get_intapp_token
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -18,7 +19,7 @@ mcp = FastMCP("Intapp Valuation Tools")
 # Initialize SDK Client
 def get_client():
     BASE_URL = "https://marcum-flow.open.intapp.com/api"
-    TOKEN = os.getenv("INTAPP_TOKEN", "INTAPP_TOKEN_REDACTED")
+    TOKEN = get_intapp_token()
     return IntappIntakeClient(BASE_URL, TOKEN)
 
 @mcp.tool()

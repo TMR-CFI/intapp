@@ -12,10 +12,15 @@ A Python-based SDK for interacting with the Intapp Intake API. This tool is desi
 ## Setup
 1. **Install dependencies**:
    ```bash
-   pip install requests pyyaml python-dotenv
+   pip install requests pyyaml python-dotenv keyring
    ```
 2. **Configure Authentication**:
-   Set your API token as an environment variable or in a `.env` file:
+   Recommended for local dev on Windows: store your token in Windows Credential Manager via `keyring`:
+   ```powershell
+   python -c "import keyring; keyring.set_password('intapp','INTAPP_TOKEN','your_token_here')"
+   ```
+
+   Alternative: set your API token as an environment variable (useful for CI and one-off sessions):
    ```powershell
    # PowerShell
    $env:INTAPP_TOKEN="your_token_here"

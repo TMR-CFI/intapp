@@ -25,10 +25,22 @@ def get_client():
 def list_valuation_requests(limit: int = 50) -> List[dict]:
     """
     List the most recent intake requests from Intapp.
+    Defaults to 'Valuation Request' type.
     """
     client = get_client()
     logger.info(f"Listing {limit} requests")
-    return client.list_requests()[:limit]
+    return client.list_requests(limit=limit)
+
+@mcp.tool()
+def get_formatted_request_table(limit: int = 10) -> str:
+    """
+    Returns a human-readable ASCII table of the most recent valuation requests.
+    Useful for displaying a summary directly to the user.
+    """
+    client = get_client()
+    logger.info(f"Fetching formatted table for {limit} requests")
+    data = client.list_requests(limit=limit)
+    return client.format_request_table(data)
 
 @mcp.tool()
 def get_request_details(request_id: int) -> dict:

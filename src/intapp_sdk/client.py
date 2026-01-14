@@ -19,15 +19,58 @@ class IntappIntakeClient:
             'Content-Type': 'application/json'
         }
 
-    def list_requests(self, limit=1000):
+    def list_requests(self, limit=1000, skip=0, request_types=None, modified_from=None):
         """
-        Retrieves a list of intake requests.
+        Retrieves a list of intake requests with optional filtering.
+        Defaults to 'Valuation Request' if no type is specified.
         """
         url = f"{self.base_url}/api/intake/v1/requests"
-        # Note: In a full SDK, we would handle pagination if the API supports it
-        response = requests.get(url, headers=self.headers)
+        
+        # Default to Valuation Request if none provided
+        if request_types is None:
+            request_types = ["Valuation Request"]
+            
+        params = {
+            'filter.rowsToTake': limit,
+            'filter.rowsToSkip': skip
+        }
+        
+        if request_types:
+            params['filter.requestTypes'] = request_types
+        if modified_from:
+            params['filter.modifiedFrom'] = modified_from
+
+        response = requests.get(url, headers=self.headers, params=params)
         response.raise_for_status()
         return response.json()
+
+    @staticmethod
+    def format_request_table(requests_data):
+        """
+        Returns a standardized ASCII table representation of request items.
+        """
+        if not requests_data:
+            return "No requests found."
+
+        # Header
+        header = f"{'ID':<8} | {'Date':<10} | {'Status':<12} | {'Current State':<25} | {'Created By':<12} | {'Name'}"
+        separator = "-" * 120
+        
+        lines = [header, separator]
+        
+        for r in requests_data:
+            req_id = str(r.get('id', ''))
+            date = str(r.get('createdOn', ''))[:10]
+            status = str(r.get('status', ''))
+            state = str(r.get('currentState', ''))[:25]
+            creator = str(r.get('createdBy', ''))[:12]
+            name = str(r.get('name', ''))
+            
+            lines.append(f"{req_id:<8} | {date:<10} | {status:<12} | {state:<25} | {creator:<12} | {name}")
+            
+        return "\n".join(lines)
+
+    @staticmethod
 
     def get_request(self, request_id):
         """

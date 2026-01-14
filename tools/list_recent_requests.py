@@ -18,6 +18,7 @@ def main():
     parser.add_argument("-n", "--count", type=int, default=15, help="Number of requests to return (default: 15)")
     parser.add_argument("-t", "--type", type=str, default="Valuation Request", help="Request type to filter by (default: 'Valuation Request')")
     parser.add_argument("--all", action="store_true", help="List all request types (ignores -t)")
+    parser.add_argument("-o", "--output", type=str, help="Output file path (.md file)")
     
     args = parser.parse_args()
 
@@ -47,8 +48,22 @@ def main():
         requests.sort(key=lambda x: x.get('createdOn', ''), reverse=True)
         
         print(f"\nFound {len(requests)} matching requests modified recently.")
-        print(f"\n{args.count} Most Recent Results:")
-        print(client.format_request_table(requests[:args.count]))
+        
+        recent_requests = requests[:args.count]
+        
+        if args.output:
+            # Output to markdown file
+            markdown_table = client.format_request_table_markdown(recent_requests)
+            with open(args.output, 'w', encoding='utf-8') as f:
+                f.write(f"# {args.count} Most Recent Requests ({type_display})\n\n")
+                f.write(f"Found {len(requests)} matching requests modified recently.\n\n")
+                f.write(markdown_table)
+            print(f"\n{args.count} Most Recent Results:")
+            print(client.format_request_table(recent_requests))
+            print(f"\n✓ Table saved to {args.output}")
+        else:
+            print(f"\n{args.count} Most Recent Results:")
+            print(client.format_request_table(recent_requests))
         
     except Exception as e:
         print(f"Error: {e}")

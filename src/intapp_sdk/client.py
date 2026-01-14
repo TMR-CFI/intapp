@@ -64,6 +64,36 @@ class IntappIntakeClient:
         
         return output_path
 
+    def search_requests_by_answer(self, query, limit=50):
+        """
+        Searches the most recent requests for a specific string in any answer field.
+        Returns a list of matching requests with the specific matching field details.
+        """
+        results = []
+        requests_list = self.list_requests()[:limit]
+        
+        for req in requests_list:
+            req_id = req['id']
+            try:
+                detail = self.get_request(req_id)
+                if not detail:
+                    continue
+                
+                answers = detail.get('answers', [])
+                for a in answers:
+                    display_val = str(a.get('displayValue', ''))
+                    if query.lower() in display_val.lower():
+                        results.append({
+                            'request_id': req_id,
+                            'request_name': req['name'],
+                            'field_name': a.get('questionName'),
+                            'value': display_val
+                        })
+            except Exception as e:
+                logger.error(f"Error searching request {req_id}: {e}")
+                
+        return results
+
     @staticmethod
     def sanitize_filename(name):
         """
